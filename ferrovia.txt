@@ -1,0 +1,13 @@
+4
+EstacaoCentral
+EstacaoNorte
+EstacaoLeste
+EstacaoSul
+7
+EstacaoCentral,EstacaoNorte,10,5.0,15
+EstacaoCentral,EstacaoLeste,25,7.5,40
+EstacaoNorte,EstacaoLeste,20,8.0,30
+EstacaoNorte,EstacaoSul,15,6.0,25
+EstacaoLeste,EstacaoSul,10,4.5,15
+EstacaoLeste,EstacaoOeste,30,12.0,50
+EstacaoSul,EstacaoOeste,20,9.0,3
