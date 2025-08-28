@@ -12,19 +12,11 @@ public class Vertice {
 		ligacoes = new ArrayList<>();
 	}
 
-	public String getNome() {
-		return nome;
-	}
+	public String getNome() { return nome; }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+	public void setNome(String nome) { this.nome = nome; }
 
-	public List<Aresta> getLigacoes() {
-		return ligacoes;
-	}
+	public List<Aresta> getLigacoes() { return ligacoes; }
 
-	public void adicionarLigacao(Aresta aresta) {
-		ligacoes.add(aresta);
-	}	
+	public void adicionarLigacao(Aresta aresta) { ligacoes.add(aresta); }	
 }

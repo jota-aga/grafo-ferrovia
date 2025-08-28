@@ -13,37 +13,20 @@ public class Aresta {
 		this.tempo = tempo;
 	}
 
-	public String getDestino() {
-		return destino;
-	}
+	public String getDestino() { return destino; }
 
-	public void setDestino(String destino) {
-		this.destino = destino;
-	}
+	public void setDestino(String destino) { this.destino = destino; }
 
-	public double getDistancia() {
-		return distancia;
-	}
+	public double getDistancia() { return distancia; }
 
-	public void setDistancia(double distancia) {
-		this.distancia = distancia;
-	}
+	public void setDistancia(double distancia) { this.distancia = distancia; }
 
-	public double getPreco() {
-		return preco;
-	}
+	public double getPreco() { return preco; }
 
-	public void setPreco(double preco) {
-		this.preco = preco;
-	}
+	public void setPreco(double preco) { this.preco = preco; }
 
-	public int getTempo() {
-		return tempo;
-	}
+	public int getTempo() { return tempo; }
 
-	public void setTempo(int tempo) {
-		this.tempo = tempo;
-	}
-	
+	public void setTempo(int tempo) { this.tempo = tempo; }
 	
 }
