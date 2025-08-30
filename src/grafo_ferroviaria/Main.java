@@ -1,6 +1,8 @@
 package grafo_ferroviaria;
 
+import grafo_ferroviaria.enums.Metrica;
 import grafo_ferroviaria.models.*;
+import grafo_ferroviaria.view.View;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -50,19 +52,7 @@ public class Main {
 
         System.out.println("\n=== Grafo carregado ===");
         grafo.vertices().forEach(System.out::println);
-
-        try {
-            var r = grafo.shortestPath(stations.get("Jabaquara"), stations.get("BarraFunda"),
-                    Rail::time, null);
-            if (Double.isInfinite(r.cost)) {
-                System.out.println("\nNão existe caminho entre Jabaquara e BarraFunda.");
-            } else {
-                System.out.println("\n=== Menor caminho (TEMPO) ===");
-                System.out.println(String.join(" -> ", r.path.stream().map(TrainStation::name).toList()));
-                System.out.printf("Tempo total: %.2f min%n", r.cost);
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println("\nErro no cálculo de rota: " + e.getMessage());
-        }
+        
+        view.principal();
     }
 }
