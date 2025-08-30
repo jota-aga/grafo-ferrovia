@@ -15,7 +15,7 @@ public class Main {
             int numVertices = Integer.parseInt(scan.nextLine().trim());
             for (int i = 0; i < numVertices; i++) {
                 String nome = scan.nextLine().trim();
-                grafo.adicionarVertice(new Vertice(nome));
+                grafo.adicionarVertice(nome);
             }
 
             int numArestas = Integer.parseInt(scan.nextLine().trim());

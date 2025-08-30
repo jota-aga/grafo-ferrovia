@@ -14,33 +14,30 @@ import java.util.Set;
 public class Grafo {
     public enum Metrica { TEMPO, DISTANCIA, PRECO }
 
-    private final List<Vertice> vertices;
-    private final Map<String, Vertice> porNome;
+    private final Map<String, List<Aresta>> porNome;
 
     public Grafo() {
-        vertices = new ArrayList<>();
         porNome = new HashMap<>();
     }
 
-    public void adicionarVertice(Vertice vertice) {
-        vertices.add(vertice);
-        porNome.put(vertice.getNome(), vertice);
+    public void adicionarVertice(String nome) {
+        porNome.put(nome, new ArrayList<>());
     }
 
     
     public boolean adicionarAresta(String origem, String destino, double distancia, double preco, int tempo) {
-        Vertice verticeOrigem = getVertice(origem);
-        Vertice verticeDestino = getVertice(destino);
+        List<Aresta> arestasOrigem = getAresta(origem);
+        List<Aresta> arestasDestino = getAresta(destino);
 
-        if (verticeOrigem == null || verticeDestino == null) return false;
-        verticeOrigem.adicionarLigacao(new Aresta(destino, distancia, preco, tempo));
+        if (arestasOrigem == null || arestasDestino == null) return false;
+        arestasOrigem.add(new Aresta(destino, distancia, preco, tempo));
         return true;
     }
 
     public void exibirGrafo() {
-        for (Vertice v : vertices) {
-            System.out.println("Origem: " + v.getNome());
-            for (Aresta a : v.getLigacoes()) {
+        for (String nome : porNome.keySet()) {
+            System.out.println("Origem: " + nome);
+            for (Aresta a : porNome.get(nome)) {
                 System.out.printf(
                     "Destino: %s | Preço: %.1f | Distância: %.1fkm | Tempo: %dmin%n",
                     a.getDestino(), a.getPreco(), a.getDistancia(), a.getTempo()
@@ -77,8 +74,8 @@ public class Grafo {
             // se chegou ao destino, para
             if (vMenorCusto.equals(destino)) break;
 
-            Vertice vertice = getVertice(vMenorCusto);
-            for (Aresta aresta : vertice.getLigacoes()) {
+            List<Aresta> arestas = getAresta(vMenorCusto);
+            for (Aresta aresta : arestas) {
                 String vizinho = aresta.getDestino();
                 if (!porNome.containsKey(vizinho)) continue;
 
@@ -128,7 +125,6 @@ public class Grafo {
     }
 
     
-    public List<Vertice> getVertices() { return vertices; }
-    public Vertice getVertice(String nome) { return porNome.get(nome); }
+    public List<Aresta> getAresta(String nome) { return porNome.get(nome); }
     public boolean contemVertice(String nome) { return porNome.containsKey(nome); }
 }
