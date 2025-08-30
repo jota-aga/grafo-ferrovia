@@ -11,8 +11,9 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import grafo_ferroviaria.enums.Metrica;
+
 public class Grafo {
-    public enum Metrica { TEMPO, DISTANCIA, PRECO }
 
     private final Map<String, List<Aresta>> porNome;
 
@@ -126,5 +127,5 @@ public class Grafo {
 
     
     public List<Aresta> getAresta(String nome) { return porNome.get(nome); }
-    public boolean contemVertice(String nome) { return porNome.containsKey(nome); }
+    public boolean contemVertice(String nome) {System.out.println(nome); return porNome.containsKey(nome); }
 }
