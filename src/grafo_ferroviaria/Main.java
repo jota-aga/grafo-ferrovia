@@ -4,18 +4,21 @@ import grafo_ferroviaria.models.*;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Grafo grafo = new Grafo();
+        HashMap<String, TrainStation> stations = new HashMap<>();
+        GenericGraph<TrainStation, Rail> grafo = new GenericGraph<>(false);
 
         try (Scanner scan = new Scanner(new File("ferrovia.txt"), StandardCharsets.UTF_8)) {
 
             int numVertices = Integer.parseInt(scan.nextLine().trim());
             for (int i = 0; i < numVertices; i++) {
                 String nome = scan.nextLine().trim();
-                grafo.adicionarVertice(nome);
+                stations.put(nome, new TrainStation(nome, 0, 0));
+                grafo.addVertex(stations.get(nome));
             }
 
             int numArestas = Integer.parseInt(scan.nextLine().trim());
@@ -27,21 +30,17 @@ public class Main {
                     nok++;
                     continue;
                 }
-                String origem    = p[0].trim();
-                String destino   = p[1].trim();
-                double distancia = Double.parseDouble(p[2].trim());
-                double preco     = Double.parseDouble(p[3].trim());
-                int tempo        = Integer.parseInt(p[4].trim());
 
-                boolean added = grafo.adicionarAresta(origem, destino, distancia, preco, tempo);
-                if (!added) {
-                    System.out.printf("Aresta ignorada: '%s' -> '%s' (vértice inexistente)%n", origem, destino);
-                    nok++;
-                } else {
-                    ok++;
-                    
-                }
+                TrainStation origem = stations.get(p[0].trim());
+                TrainStation destino = stations.get(p[1].trim());
+                double distancia = Double.parseDouble(p[2].trim());
+                double preco = Double.parseDouble(p[3].trim());
+                int tempo = Integer.parseInt(p[4].trim());
+
+                grafo.addEdge(origem, destino, new Rail(preco, tempo, distancia, false));
+                ok++;
             }
+
             System.out.printf("Arestas adicionadas: %d | ignoradas: %d%n", ok, nok);
 
         } catch (Exception e) {
@@ -50,17 +49,17 @@ public class Main {
         }
 
         System.out.println("\n=== Grafo carregado ===");
-        grafo.exibirGrafo();
+        grafo.vertices().forEach(System.out::println);
 
-        // Demonstração: menor caminho por TEMPO de Jabaquara até BarraFunda
         try {
-            var r = grafo.menorCaminho("Jabaquara", "BarraFunda", Grafo.Metrica.TEMPO);
-            if (Double.isInfinite(r.custoTotal)) {
+            var r = grafo.shortestPath(stations.get("Jabaquara"), stations.get("BarraFunda"),
+                    Rail::time, null);
+            if (Double.isInfinite(r.cost)) {
                 System.out.println("\nNão existe caminho entre Jabaquara e BarraFunda.");
             } else {
                 System.out.println("\n=== Menor caminho (TEMPO) ===");
-                System.out.println(String.join(" -> ", r.caminho));
-                System.out.printf("Tempo total: %.2f min%n", r.custoTotal);
+                System.out.println(String.join(" -> ", r.path.stream().map(TrainStation::name).toList()));
+                System.out.printf("Tempo total: %.2f min%n", r.cost);
             }
         } catch (IllegalArgumentException e) {
             System.out.println("\nErro no cálculo de rota: " + e.getMessage());
