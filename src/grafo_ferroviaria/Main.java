@@ -6,19 +6,21 @@ import grafo_ferroviaria.view.View;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Grafo grafo = new Grafo();
-        View view = new View(grafo);
+        HashMap<String, TrainStation> stations = new HashMap<>();
+        GenericGraph<TrainStation, Rail> grafo = new GenericGraph<>(false);
 
         try (Scanner scan = new Scanner(new File("ferrovia.txt"), StandardCharsets.UTF_8)) {
 
             int numVertices = Integer.parseInt(scan.nextLine().trim());
             for (int i = 0; i < numVertices; i++) {
                 String nome = scan.nextLine().trim();
-                grafo.adicionarVertice(nome);
+                stations.put(nome, new TrainStation(nome, 0, 0));
+                grafo.addVertex(stations.get(nome));
             }
 
             int numArestas = Integer.parseInt(scan.nextLine().trim());
@@ -30,21 +32,17 @@ public class Main {
                     nok++;
                     continue;
                 }
-                String origem    = p[0].trim();
-                String destino   = p[1].trim();
-                double distancia = Double.parseDouble(p[2].trim());
-                double preco     = Double.parseDouble(p[3].trim());
-                int tempo        = Integer.parseInt(p[4].trim());
 
-                boolean added = grafo.adicionarAresta(origem, destino, distancia, preco, tempo);
-                if (!added) {
-                    System.out.printf("Aresta ignorada: '%s' -> '%s' (vértice inexistente)%n", origem, destino);
-                    nok++;
-                } else {
-                    ok++;
-                    
-                }
+                TrainStation origem = stations.get(p[0].trim());
+                TrainStation destino = stations.get(p[1].trim());
+                double distancia = Double.parseDouble(p[2].trim());
+                double preco = Double.parseDouble(p[3].trim());
+                int tempo = Integer.parseInt(p[4].trim());
+
+                grafo.addEdge(origem, destino, new Rail(preco, tempo, distancia, false));
+                ok++;
             }
+
             System.out.printf("Arestas adicionadas: %d | ignoradas: %d%n", ok, nok);
 
         } catch (Exception e) {
@@ -53,8 +51,7 @@ public class Main {
         }
 
         System.out.println("\n=== Grafo carregado ===");
-        grafo.exibirGrafo();
-
+        grafo.vertices().forEach(System.out::println);
         
         view.principal();
     }
