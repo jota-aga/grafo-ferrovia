@@ -1,6 +1,5 @@
 package grafo_ferroviaria;
 
-import grafo_ferroviaria.enums.Metrica;
 import grafo_ferroviaria.models.*;
 import grafo_ferroviaria.view.View;
 
@@ -12,7 +11,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         HashMap<String, TrainStation> stations = new HashMap<>();
-        GenericGraph<TrainStation, Rail> grafo = new GenericGraph<>(false);
+        GenericGraph<TrainStation, Rail> graph = new GenericGraph<>(false);
 
         try (Scanner scan = new Scanner(new File("ferrovia.txt"), StandardCharsets.UTF_8)) {
 
@@ -20,12 +19,12 @@ public class Main {
             for (int i = 0; i < numVertices; i++) {
                 String nome = scan.nextLine().trim();
                 stations.put(nome, new TrainStation(nome, 0, 0));
-                grafo.addVertex(stations.get(nome));
+                graph.addVertex(stations.get(nome));
             }
 
-            int numArestas = Integer.parseInt(scan.nextLine().trim());
+            int numEdges = Integer.parseInt(scan.nextLine().trim());
             int ok = 0, nok = 0;
-            for (int i = 0; i < numArestas; i++) {
+            for (int i = 0; i < numEdges; i++) {
                 String[] p = scan.nextLine().split(",");
                 if (p.length != 5) {
                     System.out.println("Aresta ignorada (formato inválido): " + String.join(",", p));
@@ -33,13 +32,13 @@ public class Main {
                     continue;
                 }
 
-                TrainStation origem = stations.get(p[0].trim());
-                TrainStation destino = stations.get(p[1].trim());
-                double distancia = Double.parseDouble(p[2].trim());
-                double preco = Double.parseDouble(p[3].trim());
-                int tempo = Integer.parseInt(p[4].trim());
+                TrainStation from = stations.get(p[0].trim());
+                TrainStation to = stations.get(p[1].trim());
+                double distance = Double.parseDouble(p[2].trim());
+                double price = Double.parseDouble(p[3].trim());
+                int time = Integer.parseInt(p[4].trim());
 
-                grafo.addEdge(origem, destino, new Rail(preco, tempo, distancia, false));
+                graph.addEdge(from, to, new Rail(price, time, distance, false));
                 ok++;
             }
 
@@ -50,9 +49,11 @@ public class Main {
             return;
         }
 
-        System.out.println("\n=== Grafo carregado ===");
-        grafo.vertices().forEach(System.out::println);
-        
+        System.out.println("\n=== grafo carregado ===");
+        graph.vertices().forEach(System.out::println);
+
+        View view = new View(graph, stations);
+
         view.principal();
     }
 }
