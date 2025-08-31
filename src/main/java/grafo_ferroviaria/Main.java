@@ -1,4 +1,4 @@
-package grafo_ferroviaria;
+package main.java.grafo_ferroviaria;
 
 import grafo_ferroviaria.managers.RailwayManager;
 import grafo_ferroviaria.managers.TrainSimulator;
