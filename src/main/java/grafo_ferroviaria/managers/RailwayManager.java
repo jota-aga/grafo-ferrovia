@@ -66,11 +66,6 @@ public class RailwayManager {
         return this.stations;
     }
 
-    // ==================== Métodos para simulação de trens ====================
-
-    /**
-     * Adiciona um trem ao sistema ferroviário
-     */
     public void addTrain(String trainId, double maxSpeed, int capacity,
             String startingStationName, List<String> routeStationNames) {
         TrainStation startingStation = stations.get(startingStationName);
@@ -90,87 +85,49 @@ public class RailwayManager {
         trainSimulator.addTrain(trainId, maxSpeed, capacity, startingStation, route);
     }
 
-    /**
-     * Remove um trem do sistema
-     */
     public void removeTrain(String trainId) {
         trainSimulator.removeTrain(trainId);
     }
 
-    /**
-     * Inicia o movimento de um trem
-     */
     public void startTrain(String trainId) {
         trainSimulator.startTrain(trainId);
     }
 
-    /**
-     * Para um trem
-     */
     public void stopTrain(String trainId) {
         trainSimulator.stopTrain(trainId);
     }
 
-    /**
-     * Atualiza a simulação dos trens
-     */
     public void updateSimulation(double deltaTime) {
         trainSimulator.updateSimulation(deltaTime);
     }
 
-    /**
-     * Retorna o status de todos os trens
-     */
     public Map<String, TrainSimulator.TrainStatus> getTrainStatus() {
         return trainSimulator.getTrainStatus();
     }
 
-    /**
-     * Retorna o status de um trem específico
-     */
     public TrainSimulator.TrainStatus getTrainStatus(String trainId) {
         return trainSimulator.getTrainStatus(trainId);
     }
 
-    /**
-     * Retorna todos os trens
-     */
     public Collection<Train> getAllTrains() {
         return trainSimulator.getAllTrains();
     }
 
-    /**
-     * Retorna o simulador de trens
-     */
     public TrainSimulator getTrainSimulator() {
         return trainSimulator;
     }
 
-    // ==================== Métodos para planejamento de rotas baseado em trem
-    // ====================
-
-    /**
-     * Planeja a rota mais rápida para um trem específico baseado em sua velocidade
-     * máxima
-     */
     public List<TrainStation> planFastestRouteForTrain(String fromStation, String toStation) {
         TrainRoutePlanner planner = new TrainRoutePlanner(this);
         return planner.planShortestRouteByDistance(fromStation, toStation);
     }
 
-    /**
-     * Calcula estatísticas de uma rota para um trem específico baseado em sua
-     * velocidade máxima
-     */
     public TrainRoutePlanner.RouteStatistics calculateRouteStatisticsForTrain(List<TrainStation> route,
             double trainMaxSpeed) {
         TrainRoutePlanner planner = new TrainRoutePlanner(this);
         return planner.calculateRouteStatisticsForTrain(route, trainMaxSpeed);
     }
 
-    /**
-     * Calcula estatísticas de uma rota para um trem existente no sistema
-     */
     public TrainRoutePlanner.RouteStatistics calculateRouteStatisticsForExistingTrain(List<TrainStation> route,
             String trainId) {
         Train train = trainSimulator.getAllTrains().stream()

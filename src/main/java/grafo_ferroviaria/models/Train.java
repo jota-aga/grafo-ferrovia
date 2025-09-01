@@ -4,14 +4,14 @@ import java.util.List;
 
 public class Train {
     private final String id;
-    private final double maxSpeed; // km/h
-    private final int capacity; // número de passageiros
+    private final double maxSpeed;
+    private final int capacity;
     private final TrainStation currentStation;
     private final List<TrainStation> route;
     private int currentRouteIndex;
     private double currentSpeed;
     private boolean isMoving;
-    private double timeToNextStation; // tempo restante para chegar à próxima estação
+    private double timeToNextStation;
 
     public Train(String id, double maxSpeed, int capacity, TrainStation startingStation, List<TrainStation> route) {
         this.id = id;
@@ -25,7 +25,6 @@ public class Train {
         this.timeToNextStation = 0.0;
     }
 
-    // Getters
     public String id() {
         return id;
     }
@@ -62,7 +61,6 @@ public class Train {
         return timeToNextStation;
     }
 
-    // Métodos para controle do trem
     public void startMoving() {
         if (currentRouteIndex < route.size() - 1) {
             this.isMoving = true;
@@ -83,7 +81,6 @@ public class Train {
         timeToNextStation -= deltaTime;
 
         if (timeToNextStation <= 0) {
-            // Chegou à próxima estação
             currentRouteIndex++;
             timeToNextStation = 0.0;
             isMoving = false;
@@ -108,15 +105,11 @@ public class Train {
         this.isMoving = true;
     }
 
-    /**
-     * Atualiza a rota do trem dinamicamente
-     */
     public void updateRoute(List<TrainStation> newRoute) {
         if (newRoute == null || newRoute.isEmpty()) {
             throw new IllegalArgumentException("Nova rota não pode ser nula ou vazia");
         }
 
-        // Verifica se a nova rota contém a estação atual
         boolean containsCurrent = false;
         for (int i = 0; i < newRoute.size(); i++) {
             if (newRoute.get(i).equals(currentStation())) {
@@ -130,11 +123,9 @@ public class Train {
             throw new IllegalArgumentException("Nova rota deve conter a estação atual: " + currentStation().name());
         }
 
-        // Atualiza a rota
         this.route.clear();
         this.route.addAll(newRoute);
 
-        // Para o trem para recalcular o tempo
         this.isMoving = false;
         this.currentSpeed = 0.0;
         this.timeToNextStation = 0.0;

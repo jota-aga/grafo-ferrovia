@@ -29,9 +29,6 @@ public class TrainRoutePlanner {
         return result.path;
     }
 
-    /**
-     * Planeja uma rota entre duas estações usando o caminho mais barato
-     */
     public List<TrainStation> planCheapestRoute(String fromStation, String toStation) {
         TrainStation from = railwayManager.stations().get(fromStation);
         TrainStation to = railwayManager.stations().get(toStation);
@@ -51,9 +48,6 @@ public class TrainRoutePlanner {
         return result.path;
     }
 
-    /**
-     * Planeja uma rota entre duas estações usando o caminho mais barato
-     */
     public List<TrainStation> planMultiStopRoute(List<String> stationNames) {
         List<TrainStation> route = new ArrayList<>();
 
@@ -68,9 +62,6 @@ public class TrainRoutePlanner {
         return route;
     }
 
-    /**
-     * Calcula estatísticas de uma rota
-     */
     public RouteStatistics calculateRouteStatistics(List<TrainStation> route) {
         if (route.size() < 2) {
             throw new IllegalArgumentException("Rota deve ter pelo menos 2 estações");
@@ -98,10 +89,6 @@ public class TrainRoutePlanner {
         return new RouteStatistics(totalDistance, totalPrice, totalTime, numStops);
     }
 
-    /**
-     * Calcula estatísticas de uma rota baseado na velocidade máxima de um trem
-     * específico
-     */
     public RouteStatistics calculateRouteStatisticsForTrain(List<TrainStation> route, double trainMaxSpeed) {
         if (route.size() < 2) {
             throw new IllegalArgumentException("Rota deve ter pelo menos 2 estações");
@@ -123,16 +110,12 @@ public class TrainRoutePlanner {
 
             totalDistance += rail.distance();
             totalPrice += rail.price();
-            // Calcula o tempo baseado na velocidade máxima do trem
             totalTime += (rail.distance() / trainMaxSpeed) * 60;
         }
 
         return new RouteStatistics(totalDistance, totalPrice, (int) Math.round(totalTime), numStops);
     }
 
-    /**
-     * Classe para armazenar estatísticas de uma rota
-     */
     public static class RouteStatistics {
         private final double totalDistance;
         private final double totalPrice;

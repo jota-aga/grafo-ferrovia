@@ -1,3 +1,18 @@
-javac -d bin --module-path src src/module-info.java src/grafo_ferroviaria/Main.java src/grafo_ferroviaria/models/*.java
+#!/bin/bash
 
-java --module-path bin --module grafo_ferroviaria/grafo_ferroviaria.Main ferrovia.txt
+RAILWAY_FILE=$1
+
+if ! command -v mvn &> /dev/null; then
+    echo "Error: Maven is not installed!"
+    echo "Install Maven with: sudo apt install maven"
+    exit 1
+fi
+
+mvn clean compile
+
+if [ $? -ne 0 ]; then
+    echo "Error: Compilation failed!"
+    exit 1
+fi
+
+mvn exec:java -Dexec.mainClass="main.java.grafo_ferroviaria.Main" -Dexec.args="$RAILWAY_FILE"

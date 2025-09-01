@@ -20,13 +20,9 @@ public class TrainSimulator {
         this.trainRoutes = new HashMap<>();
         this.simulationTime = 0.0;
 
-        // Define a referência circular
         this.trafficController.setTrainSimulator(this);
     }
 
-    /**
-     * Adiciona um trem ao simulador
-     */
     public void addTrain(String trainId, double maxSpeed, int capacity,
             TrainStation startingStation, List<TrainStation> route) {
         Train train = new Train(trainId, maxSpeed, capacity, startingStation, route);
@@ -35,18 +31,12 @@ public class TrainSimulator {
         trafficController.registerTrain(trainId, train);
     }
 
-    /**
-     * Remove um trem do simulador
-     */
     public void removeTrain(String trainId) {
         trains.remove(trainId);
         trainRoutes.remove(trainId);
         trafficController.unregisterTrain(trainId);
     }
 
-    /**
-     * Inicia o movimento de um trem
-     */
     public void startTrain(String trainId) {
         Train train = trains.get(trainId);
         if (train != null) {
@@ -55,9 +45,6 @@ public class TrainSimulator {
         }
     }
 
-    /**
-     * Para um trem
-     */
     public void stopTrain(String trainId) {
         Train train = trains.get(trainId);
         if (train != null) {
@@ -65,10 +52,6 @@ public class TrainSimulator {
         }
     }
 
-    /**
-     * Calcula o tempo para chegar à próxima estação baseado na distância e
-     * velocidade
-     */
     private void calculateTimeToNextStation(Train train) {
         TrainStation current = train.currentStation();
         TrainStation next = train.getNextStation();
@@ -76,41 +59,31 @@ public class TrainSimulator {
         if (next != null) {
             Rail rail = railwayManager.graph().neighbors(current).get(next);
             if (rail != null) {
-                double distance = rail.distance(); // km
-                double time = (distance / train.maxSpeed()) * 60; // converte para minutos
+                double distance = rail.distance();
+                double time = (distance / train.maxSpeed()) * 60;
                 train.setTimeToNextStation(time);
             }
         }
     }
 
-    /**
-     * Atualiza a posição de todos os trens
-     */
     public void updateSimulation(double deltaTime) {
         simulationTime += deltaTime;
 
-        // Atualiza os tempos de espera no controlador de tráfego
         trafficController.updateWaitingTimes(deltaTime);
 
         for (Train train : trains.values()) {
-            // Só calcula tempo para próxima estação se o trem não está aguardando
             if (!train.isMoving() && !train.hasReachedDestination() && !trafficController.isTrainWaiting(train.id())) {
                 calculateTimeToNextStation(train);
             }
 
-            // Atualiza a posição do trem no controlador de tráfego
             trafficController.updateTrainPosition(train.id(), train, deltaTime);
 
-            // Só atualiza a posição se o trem não estiver aguardando
             if (!trafficController.isTrainWaiting(train.id())) {
                 train.updatePosition(deltaTime);
             }
         }
     }
 
-    /**
-     * Retorna o status atual de todos os trens
-     */
     public Map<String, TrainStatus> getTrainStatus() {
         Map<String, TrainStatus> status = new HashMap<>();
 
@@ -134,9 +107,6 @@ public class TrainSimulator {
         return status;
     }
 
-    /**
-     * Retorna informações sobre um trem específico
-     */
     public TrainStatus getTrainStatus(String trainId) {
         Train train = trains.get(trainId);
         if (train == null) {
@@ -155,44 +125,26 @@ public class TrainSimulator {
                 trafficController.getWaitingTime(trainId));
     }
 
-    /**
-     * Retorna todos os trens
-     */
     public Collection<Train> getAllTrains() {
         return trains.values();
     }
-
-    /**
-     * Retorna o tempo atual da simulação
-     */
+    
     public double getSimulationTime() {
         return simulationTime;
     }
 
-    /**
-     * Retorna o controlador de tráfego
-     */
     public TrafficController getTrafficController() {
         return trafficController;
     }
 
-    /**
-     * Verifica se um trem está aguardando
-     */
     public boolean isTrainWaiting(String trainId) {
         return trafficController.isTrainWaiting(trainId);
     }
 
-    /**
-     * Obtém o tempo de espera de um trem
-     */
     public double getTrainWaitingTime(String trainId) {
         return trafficController.getWaitingTime(trainId);
     }
 
-    /**
-     * Classe para representar o status de um trem
-     */
     public static class TrainStatus {
         private final String trainId;
         private final TrainStation currentStation;
@@ -218,7 +170,6 @@ public class TrainSimulator {
             this.waitingTime = waitingTime;
         }
 
-        // Getters
         public String trainId() {
             return trainId;
         }

@@ -37,13 +37,6 @@ public class GenericGraph<V, E> {
         return Collections.unmodifiableSet(adj.keySet());
     }
 
-    /* ==================== Dijkstra genérico ==================== */
-    /**
-     * @param cost    Função que transforma E (dados da aresta) em custo (>= 0).
-     * @param allowed (Opcional) Filtro para permitir/bloquear arestas (ex.:
-     *                “somente trem rápido”).
-     * @return distâncias mínimas a partir de source.
-     */
     public Map<V, Double> dijkstraDistances(
             V source,
             ToDoubleFunction<? super E> cost,
@@ -74,7 +67,6 @@ public class GenericGraph<V, E> {
                 double alt = du + w;
                 if (alt < dist.get(v)) {
                     dist.put(v, alt);
-                    // atualização simples de prioridade (remove/insere)
                     pq.remove(v);
                     pq.add(v);
                 }
@@ -139,9 +131,6 @@ public class GenericGraph<V, E> {
         return new PathResult<>(path, d);
     }
 
-    /**
-     * Encontra o caminho mais curto excluindo uma aresta específica
-     */
     public PathResult<V> shortestPathExcludingEdge(
             V source, V target,
             ToDoubleFunction<? super E> cost,
@@ -168,7 +157,6 @@ public class GenericGraph<V, E> {
                 V v = e.getKey();
                 E data = e.getValue();
 
-                // Exclui a aresta específica
                 if (u.equals(excludedFrom) && v.equals(excludedTo))
                     continue;
 
@@ -220,14 +208,11 @@ public class GenericGraph<V, E> {
         }
     }
 
-    /* ==================== Helpers p/ custos genéricos ==================== */
-    /** Extrator numérico de atributo (ex.: Rail::price), útil p/ composições. */
     public interface Feature<E> extends ToDoubleFunction<E> {
         static <E> Feature<E> of(ToDoubleFunction<E> f) {
             return f::applyAsDouble;
         }
 
-        /** Soma ponderada de features (w1*f1 + w2*f2 + ...) */
         static <E> ToDoubleFunction<E> weighted(Map<Feature<E>, Double> weights) {
             return e -> {
                 double s = 0.0;
@@ -237,12 +222,5 @@ public class GenericGraph<V, E> {
                 return s;
             };
         }
-
-        /**
-         * Custo lexicográfico (min f1; empate -> f2; depois f3...).
-         * Dijkstra puro não é lexicográfico, mas você pode usar isso para comparar
-         * caminhos na pós-análise
-         * ou adaptar para algoritmos multi-critério. Mantido aqui como utilitário.
-         */
     }
 }
