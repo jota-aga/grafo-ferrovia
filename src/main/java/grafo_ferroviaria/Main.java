@@ -1,4 +1,4 @@
-package main.java.grafo_ferroviaria;
+package grafo_ferroviaria;
 
 import grafo_ferroviaria.managers.RailwayManager;
 import grafo_ferroviaria.managers.TrainSimulator;
@@ -31,6 +31,12 @@ public class Main {
 
     private Map<String, TrainPosition> trainPositions;
     private Map<String, Point> stationPositions;
+    // UI controls for route calculation
+    private javax.swing.JComboBox<String> cmbFrom;
+    private javax.swing.JComboBox<String> cmbTo;
+    private javax.swing.JComboBox<grafo_ferroviaria.managers.RailwayManager.RouteCriterion> cmbCriterion;
+    private javax.swing.JButton btnCalcRoute;
+
 
     private static class TrainPosition {
         TrainStation fromStation;
@@ -57,6 +63,7 @@ public class Main {
         stationPositions = new HashMap<>();
 
         setupGUI();
+        populateStationCombos();
         setupTrains();
         startSimulation();
     }
@@ -96,6 +103,55 @@ public class Main {
         buttonPanel.add(resetButton);
         buttonPanel.add(speedButton);
         controlPanel.add(buttonPanel);
+        // --- Route selection controls ---
+        cmbFrom = new JComboBox<>();
+        cmbTo = new JComboBox<>();
+        cmbCriterion = new JComboBox<>(grafo_ferroviaria.managers.RailwayManager.RouteCriterion.values());
+        btnCalcRoute = new JButton("Calcular rota");
+
+        JPanel routePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        routePanel.setBorder(BorderFactory.createTitledBorder("Calcular rota"));
+        routePanel.add(new JLabel("Origem:"));
+        routePanel.add(cmbFrom);
+        routePanel.add(new JLabel("Destino:"));
+        routePanel.add(cmbTo);
+        routePanel.add(new JLabel("Métrica:"));
+        routePanel.add(cmbCriterion);
+        routePanel.add(btnCalcRoute);
+
+        controlPanel.add(routePanel);
+
+        // Ação do botão Calcular rota
+        btnCalcRoute.addActionListener(e -> {
+            String from = (String) cmbFrom.getSelectedItem();
+            String to = (String) cmbTo.getSelectedItem();
+            grafo_ferroviaria.managers.RailwayManager.RouteCriterion crit =
+                    (grafo_ferroviaria.managers.RailwayManager.RouteCriterion) cmbCriterion.getSelectedItem();
+
+            if (from == null || to == null) {
+                log("Selecione origem e destino.");
+                return;
+            }
+            if (from.equals(to)) {
+                log("Origem e destino não podem ser iguais.");
+                return;
+            }
+
+            try {
+                java.util.List<grafo_ferroviaria.models.TrainStation> path = railwayManager.planRoute(from, to, crit);
+                java.util.List<String> routeNames = new java.util.ArrayList<>();
+                for (grafo_ferroviaria.models.TrainStation s : path) routeNames.add(s.name());
+
+                String trainId = "TREM-" + System.currentTimeMillis();
+                railwayManager.addTrain(trainId, 120.0, 200, from, new java.util.ArrayList<>(routeNames));
+                railwayManager.startTrain(trainId);
+                log("Rota " + from + " → " + to + " (" + crit + ") calculada. Trem iniciado: " + trainId);
+            } catch (Exception ex) {
+                log("Falha ao calcular rota: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
+
 
         statusArea = new JTextArea(15, 40);
         statusArea.setEditable(false);
@@ -200,7 +256,7 @@ public class Main {
             g2d.setStroke(new BasicStroke(2));
             g2d.drawOval(pos.x - 15, pos.y - 15, 30, 30);
 
-            g2d.setColor(Color.BLACK);
+            g2d.setColor(Color.GREEN);
             g2d.setFont(new Font("Arial", Font.BOLD, 12));
             FontMetrics fm = g2d.getFontMetrics();
             int textWidth = fm.stringWidth(name);
@@ -296,8 +352,11 @@ public class Main {
                 }
 
                 double timeToNext = train.timeToNextStation();
-                double totalTime = (railwayManager.graph().neighbors(currentStation).get(nextStation).distance()
-                        / train.maxSpeed()) * 60;
+                double totalTime = railwayManager.graph()
+                        .neighbors(currentStation)
+                        .get(nextStation)
+                        .time();
+
                 double elapsedTime = totalTime - timeToNext;
                 trainPos.progress = Math.min(1.0, elapsedTime / totalTime);
                 trainPos.isMoving = true;
@@ -312,6 +371,28 @@ public class Main {
         }
     }
 
+
+    private void populateStationCombos() {
+        java.util.List<String> names = new java.util.ArrayList<>(railwayManager.stations().keySet());
+        java.util.Collections.sort(names);
+        javax.swing.DefaultComboBoxModel<String> modelFrom = new javax.swing.DefaultComboBoxModel<>();
+        javax.swing.DefaultComboBoxModel<String> modelTo = new javax.swing.DefaultComboBoxModel<>();
+        for (String n : names) {
+            modelFrom.addElement(n);
+            modelTo.addElement(n);
+        }
+        if (cmbFrom != null) cmbFrom.setModel(modelFrom);
+        if (cmbTo != null) cmbTo.setModel(modelTo);
+        if (names.size() >= 2) {
+            cmbFrom.setSelectedIndex(0);
+            cmbTo.setSelectedIndex(names.size() - 1);
+        }
+        if (cmbCriterion != null) {
+            try {
+                cmbCriterion.setSelectedItem(grafo_ferroviaria.managers.RailwayManager.RouteCriterion.TIME);
+            } catch (Exception ignored) {}
+        }
+    }
     private void setupTrains() {
         try {
             List<String> route1 = railwayManager.planFastestRouteForTrain("EstacaoA", "EstacaoC")
@@ -406,20 +487,46 @@ public class Main {
                     trainStatus.currentStation() != null ? trainStatus.currentStation().name() : "N/A",
                     trainStatus.nextStation() != null ? trainStatus.nextStation().name() : "N/A"));
             sb.append(String.format("   Velocidade: %.1f km/h\n", trainStatus.currentSpeed()));
+            sb.append(String.format("Velocidade: %.1f km/h\n", trainStatus.currentSpeed()));
+            sb.append(String.format("Movendo: %s\n", trainStatus.isMoving() ? "Sim" : "Não"));
             sb.append(String.format("   Movendo: %s\n", trainStatus.isMoving() ? "Sim" : "Não"));
+
 
             if (trainStatus.isWaiting()) {
                 sb.append(String.format("   Aguardando: %.1f min\n", trainStatus.waitingTime()));
             } else if (trainStatus.isMoving() && !trainStatus.hasReachedDestination()) {
                 sb.append(String.format("   Tempo restante: %.1f min\n", trainStatus.timeToNextStation()));
             } else if (trainStatus.hasReachedDestination()) {
-                sb.append("   Chegou ao destino!\n");
+                sb.append("Chegou ao destino!\n");
+                sb.append(summarizeTotals(trainStatus.trainId()));
             }
             sb.append("\n");
         }
 
         statusArea.setText(sb.toString());
     }
+
+    private String summarizeTotals(String trainId) {
+        java.util.List<TrainStation> route = railwayManager.getTrainRoute(trainId);
+        double totalPrice = 0.0;
+        double totalDist = 0.0;  // km
+        double totalTime = 0.0;  // min
+
+        for (int i = 0; i + 1 < route.size(); i++) {
+            Rail r = railwayManager.graph()
+                    .neighbors(route.get(i))
+                    .get(route.get(i + 1));
+            if (r != null) {
+                totalPrice += r.price();
+                totalDist  += r.distance();
+                totalTime  += r.time();
+            }
+        }
+
+        return String.format("Preço total: R$ %.2f%nDistância total: %.1f km%nTempo total: %.0f min%n",
+                totalPrice, totalDist, totalTime);
+    }
+
 
     private void log(String message) {
         statusArea.append(message + "\n");

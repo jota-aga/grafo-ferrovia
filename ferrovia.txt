@@ -1,8 +1,23 @@
-4
-EstacaoA
-EstacaoB
-EstacaoC
-EstacaoD
-2
-EstacaoA,EstacaoB,50.0,25.0,30
-EstacaoB,EstacaoC,40.0,20.0,25
+9
+Jabaquara
+Saude
+SaoJudas
+Conceicao
+Consolacao
+Republica
+BarraFunda
+Itaquera
+Expresso
+12
+Jabaquara, Saude,5.0,2.5,10
+Saude, SaoJudas,4.0,2.0,8
+SaoJudas, Conceicao,5.0,2.5,10
+Conceicao, Consolacao,6.0,2.5,14
+Consolacao, Republica,2.0,1.0,6
+Republica, BarraFunda,4.0,1.5,9
+BarraFunda, Itaquera,12.0,4.0,28
+Consolacao,Itaquera,15.0,6.0,40
+Jabaquara, Expresso,30.0,15.0,25
+Expresso, Itaquera,20.0,2.0,15
+Conceicao, Expresso,8.0,0.5,18
+Republica, Expresso,10.0,0.5,20
