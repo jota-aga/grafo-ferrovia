@@ -26,6 +26,26 @@ public class RailwayManager {
         this.trainSimulator = new TrainSimulator(this);
     }
 
+    public java.util.List<TrainStation> getTrainRoute(String trainId) {
+        for (Train t : getAllTrains()) {
+            if (t.id().equals(trainId)) {
+                return new java.util.ArrayList<>(t.route());
+            }
+        }
+        return java.util.Collections.emptyList();
+    }
+
+    public enum RouteCriterion { TIME, DISTANCE, PRICE }
+
+    public List<TrainStation> planRoute(String fromStation, String toStation, RouteCriterion criterion) {
+        TrainRoutePlanner planner = new TrainRoutePlanner(this);
+        return switch (criterion) {
+            case TIME -> planner.planFastestRouteByTime(fromStation, toStation);
+            case DISTANCE -> planner.planShortestRouteByDistance(fromStation, toStation);
+            case PRICE -> planner.planCheapestRoute(fromStation, toStation);
+        };
+    }
+
     public void loadRailway(String path) {
         try (Scanner scan = new Scanner(new File(path), StandardCharsets.UTF_8)) {
             int numVertex = Integer.parseInt(scan.nextLine().trim());
@@ -119,7 +139,7 @@ public class RailwayManager {
 
     public List<TrainStation> planFastestRouteForTrain(String fromStation, String toStation) {
         TrainRoutePlanner planner = new TrainRoutePlanner(this);
-        return planner.planShortestRouteByDistance(fromStation, toStation);
+        return planner.planFastestRouteByTime(fromStation, toStation);
     }
 
     public TrainRoutePlanner.RouteStatistics calculateRouteStatisticsForTrain(List<TrainStation> route,

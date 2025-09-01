@@ -15,4 +15,4 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-mvn exec:java -Dexec.mainClass="main.java.grafo_ferroviaria.Main" -Dexec.args="$RAILWAY_FILE"
+mvn exec:java -Dexec.mainClass="grafo_ferroviaria.Main" -Dexec.args="$RAILWAY_FILE"

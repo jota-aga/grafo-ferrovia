@@ -29,6 +29,25 @@ public class TrainRoutePlanner {
         return result.path;
     }
 
+    public List<TrainStation> planFastestRouteByTime(String fromStation, String toStation) {
+        TrainStation from = railwayManager.stations().get(fromStation);
+        TrainStation to = railwayManager.stations().get(toStation);
+
+        if (from == null || to == null) {
+            throw new IllegalArgumentException("Estação não encontrada");
+        }
+
+        GenericGraph.PathResult<TrainStation> result = railwayManager.graph()
+                .shortestPath(from, to, Rail::time, null);
+
+        if (result.cost == Double.POSITIVE_INFINITY) {
+            throw new IllegalArgumentException(
+                    "Não existe caminho entre " + from.name() + " e " + to.name());
+        }
+
+        return result.path;
+    }
+
     public List<TrainStation> planCheapestRoute(String fromStation, String toStation) {
         TrainStation from = railwayManager.stations().get(fromStation);
         TrainStation to = railwayManager.stations().get(toStation);
