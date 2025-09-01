@@ -37,13 +37,6 @@ public class GenericGraph<V, E> {
         return Collections.unmodifiableSet(adj.keySet());
     }
 
-    /* ==================== Dijkstra genérico ==================== */
-    /**
-     * @param cost    Função que transforma E (dados da aresta) em custo (>= 0).
-     * @param allowed (Opcional) Filtro para permitir/bloquear arestas (ex.:
-     *                “somente trem rápido”).
-     * @return distâncias mínimas a partir de source.
-     */
     public Map<V, Double> dijkstraDistances(
             V source,
             ToDoubleFunction<? super E> cost,
@@ -74,7 +67,6 @@ public class GenericGraph<V, E> {
                 double alt = du + w;
                 if (alt < dist.get(v)) {
                     dist.put(v, alt);
-                    // atualização simples de prioridade (remove/insere)
                     pq.remove(v);
                     pq.add(v);
                 }
@@ -139,6 +131,63 @@ public class GenericGraph<V, E> {
         return new PathResult<>(path, d);
     }
 
+    public PathResult<V> shortestPathExcludingEdge(
+            V source, V target,
+            ToDoubleFunction<? super E> cost,
+            V excludedFrom, V excludedTo) {
+        requireVertex(source);
+        requireVertex(target);
+
+        Map<V, Double> dist = new HashMap<>();
+        Map<V, V> prev = new HashMap<>();
+        for (V v : adj.keySet())
+            dist.put(v, Double.POSITIVE_INFINITY);
+        dist.put(source, 0.0);
+
+        PriorityQueue<V> pq = new PriorityQueue<>(Comparator.comparingDouble(dist::get));
+        pq.add(source);
+
+        while (!pq.isEmpty()) {
+            V u = pq.poll();
+            if (u.equals(target))
+                break;
+
+            double du = dist.get(u);
+            for (Map.Entry<V, E> e : neighbors(u).entrySet()) {
+                V v = e.getKey();
+                E data = e.getValue();
+
+                if (u.equals(excludedFrom) && v.equals(excludedTo))
+                    continue;
+
+                double w = cost.applyAsDouble(data);
+                if (w < 0)
+                    throw new IllegalArgumentException("Dijkstra exige custos não negativos.");
+
+                double alt = du + w;
+                if (alt < dist.get(v)) {
+                    dist.put(v, alt);
+                    prev.put(v, u);
+                    pq.remove(v);
+                    pq.add(v);
+                }
+            }
+        }
+
+        double d = dist.get(target);
+        if (Double.isInfinite(d))
+            return new PathResult<>(List.of(), Double.POSITIVE_INFINITY);
+
+        List<V> path = new ArrayList<>();
+        for (V at = target; at != null; at = prev.get(at)) {
+            path.add(at);
+            if (at.equals(source))
+                break;
+        }
+        Collections.reverse(path);
+        return new PathResult<>(path, d);
+    }
+
     private void requireVertex(V v) {
         if (!adj.containsKey(v))
             throw new IllegalArgumentException("Vértice inexistente: " + v);
@@ -159,14 +208,11 @@ public class GenericGraph<V, E> {
         }
     }
 
-    /* ==================== Helpers p/ custos genéricos ==================== */
-    /** Extrator numérico de atributo (ex.: Rail::price), útil p/ composições. */
     public interface Feature<E> extends ToDoubleFunction<E> {
         static <E> Feature<E> of(ToDoubleFunction<E> f) {
             return f::applyAsDouble;
         }
 
-        /** Soma ponderada de features (w1*f1 + w2*f2 + ...) */
         static <E> ToDoubleFunction<E> weighted(Map<Feature<E>, Double> weights) {
             return e -> {
                 double s = 0.0;
@@ -176,12 +222,5 @@ public class GenericGraph<V, E> {
                 return s;
             };
         }
-
-        /**
-         * Custo lexicográfico (min f1; empate -> f2; depois f3...).
-         * Dijkstra puro não é lexicográfico, mas você pode usar isso para comparar
-         * caminhos na pós-análise
-         * ou adaptar para algoritmos multi-critério. Mantido aqui como utilitário.
-         */
     }
 }

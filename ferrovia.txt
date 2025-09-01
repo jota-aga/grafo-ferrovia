@@ -1,29 +1,23 @@
-13
+9
 Jabaquara
 Saude
 SaoJudas
 Conceicao
-Tucuruvi
-VilaMadalena
 Consolacao
-Brigadeiro
-VilaPrudente
-Itaquera
-Se
 Republica
 BarraFunda
-14
-Jabaquara,Saude,2.5,4.4,5
-Saude,SaoJudas,1.5,4.4,3
-SaoJudas,Conceicao,2.0,4.4,4
-Conceicao,Tucuruvi,15.0,4.4,25
-VilaMadalena,Consolacao,6.0,4.4,15
-Consolacao,Brigadeiro,2.0,4.4,5
-Brigadeiro,VilaPrudente,7.0,4.4,18
-Itaquera,Se,19.0,4.4,35
-Se,Republica,2.0,4.4,5
-Republica,BarraFunda,4.0,4.4,10
-Se,Consolacao,1.0,0.0,4
-Republica,Consolacao,0.5,0.0,3
-Conceicao,Se,9.0,0.0,15
-Se,Conceicao,9.0,0.0,15
+Itaquera
+Expresso
+12
+Jabaquara, Saude,5.0,2.5,10
+Saude, SaoJudas,4.0,2.0,8
+SaoJudas, Conceicao,5.0,2.5,10
+Conceicao, Consolacao,6.0,2.5,14
+Consolacao, Republica,2.0,1.0,6
+Republica, BarraFunda,4.0,1.5,9
+BarraFunda, Itaquera,12.0,4.0,28
+Consolacao,Itaquera,15.0,6.0,40
+Jabaquara, Expresso,30.0,15.0,25
+Expresso, Itaquera,20.0,2.0,15
+Conceicao, Expresso,8.0,0.5,18
+Republica, Expresso,10.0,0.5,20

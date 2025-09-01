@@ -4,11 +4,13 @@ public class TrainStation {
     private final String name;
     private final double latitude;
     private final double longitude;
+    private final TrainStationType type;
 
-    public TrainStation(String name, double latitude, double longitude) {
+    public TrainStation(String name, double latitude, double longitude, TrainStationType type) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.type = type;
     }
 
     public String name() {
@@ -21,6 +23,10 @@ public class TrainStation {
 
     public double longitude() {
         return longitude;
+    }
+
+    public TrainStationType type() {
+        return type;
     }
 
     @Override
