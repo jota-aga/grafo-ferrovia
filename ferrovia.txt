@@ -1,8 +1,33 @@
+6
+São Paulo
+Belo Horizonte
+Rio de Janeiro
+Brasilia
+Curitiba
+Campo Grande
+6
+São Paulo,Brasilia,850
+São Paulo,Belo Horizonte,490
+Belo Horizonte,Brasilia,620
+São Paulo,Rio de Janeiro,350
+São Paulo,Curitiba,320
+Brasilia,Campo Grande,875
 4
-EstacaoA
-EstacaoB
-EstacaoC
-EstacaoD
-2
-EstacaoA,EstacaoB,50.0,25.0,30
-EstacaoB,EstacaoC,40.0,20.0,25
+TREM-01,100,0.17,São Paulo,Brasilia,850
+TREM-02,120,0.09,São Paulo,Brasilia,1110
+TREM-03,140,0.22,Brasilia,Campo Grande,875
+TREM-04,80,0.13,Curitiba,Rio de Janeiro,670
+12
+TREM-01,São Paulo,Brasilia,05:00,13:30
+TREM-01,Brasilia,São Paulo,14:30,23:00
+TREM-02,São Paulo,Belo Horizonte,05:10,09:16
+TREM-02,Belo Horizonte,Brasilia,09:46,14:56
+TREM-02,Brasilia,Belo Horizonte,15:56,21:06
+TREM-02,Belo Horizonte,São Paulo,21:36,01:42
+TREM-03,Brasilia,Campo Grande,08:00,14:15
+TREM-03,Campo Grande,Brasilia,15:15,21:30
+TREM-04,Curitiba,São Paulo,04:00,08:00
+TREM-04,São Paulo,Rio de Janeiro,08:30,12:53
+TREM-04,Rio de Janeiro,São Paulo,13:53,18:16
+TREM-04,São Paulo,Curitiba,18:46,22:46
+
